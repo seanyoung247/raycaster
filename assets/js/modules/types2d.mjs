@@ -36,30 +36,22 @@ export class Point2D {
    * Gets the x coordinate of this point
    *  @return {number} The x axis coordinate
    */
-  get x() {
-    return this._x;
-  }
+  get x() { return this._x; }
   /**
    * Sets the x coordinate of this point
    *  @param {number} val - The new value for the x axis coordinate
    */
-  set x(val) {
-    this._x = val;
-  }
+  set x(val) { this._x = val; }
   /**
    * Gets the x coordinate of this point
    *  @return {number} The y axis coordinate
    */
-  get y() {
-    return this._y;
-  }
+  get y() { return this._y; }
   /**
    * Sets the y coordinate of this point
    *  @param {number} val - The new value for the y axis coordinate
    */
-  set y(val) {
-    this._y = val;
-  }
+  set y(val) { this._y = val; }
   /**
    * Calculates the distance between two points
    *  @param {Object} point - The point to measure distance to
@@ -213,16 +205,12 @@ export class BoundingCircle extends Point2D {
    * Get the radius value
    *  @return {number} The radius value
    */
-  get radius() {
-    return this._radius;
-  }
+  get radius() { return this._radius; }
   /**
    * Set the radius of the box
    *  @param {number} val - the new circle radius
    */
-  set radius(val) {
-    this._radius = val;
-  }
+  set radius(val) { this._radius = val; }
 
   /**
    * Detects if collision has occured between two bounding circles

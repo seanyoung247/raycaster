@@ -291,20 +291,51 @@ export class BoundingBox extends Point2D {
       }
     }
   }
+
   /**
-   * Performs a simple collision check on another boundingBox.
-   *  @param {Object} box - The BoundingBox to check for intersection
-   *  @return {boolean} true if colliding
+   * Checks if a vector intersects this bounding box anywhere along it's length
+   *  @param {Object} origin Point2D describing the origin of the vector
+   *  @param {Object} vector Vector2D describing the vector
+   *  @param {number} pX X axis padding to add to bounding box dimensions
+   *  @param {number} pY Y axis padding to add to bounding box dimensions
    */
-  collides(box) {
-    if (this._x < box._x + box._w &&
-        this._x + this._w > box._x &&
-        this._y < box._y + box._h &&
-        this._y + this._h > box._y) {
-      return true;
+  vectorIntersection(origin, vector, pX, pY) {
+    const scaleX = 1.0 / vector.x;
+    const scaleY = 1.0 / vector.y;
+    const signX = Math.sign(scaleX);
+    const signY = Math.sign(scaleY);
+    const nearTimeX = (this.x - signX * (this.rX + pX) - origin.x) * scaleX;
+    const nearTimeY = (this.y - signY * (this.rY + pY) - origin.y) * scaleY;
+    const farTimeX = (this.x + signX * (this.rX + pX) - origin.x) * scaleX;
+    const farTimeY = (this.y + signY * (this.rY + pY) - origin.y) * scaleY;
+
+    if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
+      return null;
     }
-    return false;
+
+    const nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
+    const farTime = farTimeX > farTimeY ? farTimeX : farTimeY;
+
+    if (nearTime >= 1 || farTime <= 0) {
+      return null;
+    }
+
+    let hit = {time: Math.clamp(nearTime, 0, 1)};
+    if (nearTimeX > nearTimeY) {
+      hit.normal.x = -signX;
+      hit.normal.y = 0;
+    } else {
+      hit.normal.x = 0;
+      hit.normal.y = -signY;
+    }
+    hit.delta.x = (1.0 - hit.time) * -vector.x;
+    hit.delta.y = (1.0 - hit.time) * -vector.y;
+    hit.pos.x = origin.x + vector.x * hit.time;
+    hit.pos.y = origin.y + vector.y * hit.time;
+
+    return hit;
   }
+
   /**
    * Performs a comprehensive collision test that checks where the two boxes are
    * overlapping and indicates the closest point to move them out of collision.

@@ -231,15 +231,15 @@ export class BoundingCircle extends Point2D {
 export class BoundingBox extends Point2D {
   /**
    * Creates a new bounding box
-   *  @param {number} x - The x position of the top left corner
-   *  @param {number} y - The y position of the top left corner
-   *  @param {number} width - The width of the box
-   *  @param {number} height - The height of the box
+   *  @param {number} x - The x position of the center of the box
+   *  @param {number} y - The y position of the center of the box
+   *  @param {number} rX - Distance from center to x sides
+   *  @param {number} rY - Distance from center to y sides
    */
-  constructor(x, y, width, height) {
+  constructor(x, y, rX, rY) {
     super(x, y);
-    this._w = width;
-    this._h = height;
+    this._rX = rX;
+    this._rY = rY;
   }
   /**
    * Copies the values of another BoundingBox to this one
@@ -248,33 +248,15 @@ export class BoundingBox extends Point2D {
   copy(box) {
     this._x = box._x;
     this._y = box._y;
-    this._w = box._w;
-    this._h = box._h;
+    this._rX = box._rX;
+    this._rY = box._rY;
   }
-  /**
-   * Get the width value
-   *  @return {number} The width value
-   */
-  get width() {
-    return this._w;
-  }
-  /**
-   * Set the width of the box
-   *  @param {number} val - the new box width
-   */
-  set width(val) {
-    this._w = val;
-  }
-  /**
-   * Get the height value
-   *  @return {number} The height value
-   */
-  get height() {
-    return this._h;
-  }
-  set height(val) {
-    this._h = val;
-  }
+
+  get radiusX() { return this._rX; }
+  set radiusX(val) { this._rX = val; }
+  get radiusY() { return this._rY; }
+  set radiusY(val) { this._rY = val; }
+
   /**
    * Checks whether the point is within the box boundary
    *  @param {Object} point - The Point2D cordinates to check

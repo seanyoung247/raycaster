@@ -260,24 +260,36 @@ export class BoundingBox extends Point2D {
   /**
    * Checks whether the point is within the box boundary
    *  @param {Object} point - The Point2D cordinates to check
-   *  @return {boolean} true if the point is inside this box, otherwise false
+   *  @return {object} An object describing any collision or null if no collision
    */
-  pointInBounds(point) {
-    return this.inBounds(point._x, point._y);
-  }
-  /**
-   * Checks whether the x,y coordinate passed is within the box boundary
-   *  @param {number} x - The x coordinate
-   *  @param {number} y - The y coordinate
-   *  @return {boolean} true if the point is inside this box, otherwise false
-   */
-  inBounds(x, y) {
-    if (x >= this._x && y >= this._y &&
-        x <= (this._x + this._w) &&
-        y <= (this._y + this._h)) {
-      return true;
+  pointIntersection(point) {
+    const dX = point.x - this.x;
+    const pX = this.rX - Math.abs(dX);
+    if (pX <= 0) {
+      return null;
     }
-    return false;
+
+    const dY = point.y - this.y;
+    const pY = this.rY - Math.abs(dY);
+    if (pY <= 0) {
+      return null;
+    }
+
+    if (pX < pY) {
+      const sX = Math.sign(dX);
+      return {
+        delta: { x: pX * sX , y: 0 },
+        normal: sX,
+        pos: { x: this.x + (this.rX * sX) , y: point.y };
+      }
+    } else {
+      const sY = Math.sign(dY);
+      return {
+        delta: { x: 0, y: pY * sY },
+        normal: sY,
+        pos: { x: point.x , y: this.y + (this.rX * sX) };
+      }
+    }
   }
   /**
    * Performs a simple collision check on another boundingBox.

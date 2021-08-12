@@ -107,3 +107,87 @@ class Ray2D {
     return -1;
   }
 }
+
+/**
+ * Models a 2D raycasting camera.
+ */
+class RayCamera2D {
+  /**
+   * Creates a new RayCamera2D
+   *  @param {Object} position The x,y coordinates of the camera origin
+   *  @param {Object} direction The x,y vector of the camera direction vector
+   *  @param {number} fov The Field of view, in radians, for the camera
+   *  @param {number} range The maximum distance in world units the camera can see
+   */
+  constructor(position, direction, columns, fov = 1.57079632679, range = 15) {
+    this._position = new Point2D(position.x, position.y);
+    this._direction = new Vector2D(direction.x, direction.y);
+    this._fov = fov;
+    this._range = range;
+    this._scene = new Array(columns);
+  }
+
+  /** Gets the FOV */
+  get fov() {
+    return this._fov;
+  }
+  /**
+   * Sets the FOV
+   *  @param {number} val The new FOV value in radians
+   */
+  set fov(val) {
+    this._fov = val;
+  }
+
+  /** gets the current column count the camera is set for */
+  get columns() {
+    return this._scene;
+  }
+
+  /**
+   * Sets the camera's column count
+   *  @param {number} val The new column count
+   */
+  set columns(val) {
+    this._scene.length = val;
+  }
+
+  /** Gets the camera position */
+  get position() {
+    return this._position;
+  }
+
+  /** Gets the camera direction */
+  get direction() {
+    return this._direction;
+  }
+
+  /** Returns the current scene descriptor */
+  get scene() {
+    return this._scene;
+  }
+
+  /**
+   * Casts rays into the map for each column and returns a list of distances
+   * describing the camera view.
+   *  @param {Object} map The map to cast into
+   */
+  rayCast(map) {
+    const halfFOV = this._fov / 2;
+    const columns = this._scene.length;
+    const dirX = this._direction.x;
+    const dirY = this._direction.y;
+    const ray = new Ray2D(this._position, this._direction);
+
+    for (let column = 0; column < columns; column++) {
+      // Calculate the ray vector
+      let offset = (( (column << 1) / (columns - 1) ) - 1) * halfFOV;
+      ray.vector.x = dirX - offset * dirY;
+      ray.vector.y = dirY - offset * -dirX;
+      // Cast the ray
+      this._scene[column] = ray.cast(map, this._range);
+    }
+  }
+}
+
+export { Ray2D, RayCamera2D };

@@ -5,11 +5,10 @@
  *
  */
 
-
 /**
  * Models a point in 2D space
  */
-class Point2D {
+export class Point2D {
   /**
    * Creates a point
    *  @param {number} x - The x axis coordinate of the point
@@ -81,7 +80,7 @@ class Point2D {
  * Models a 2D vector
  *  @extends Point2D
  */
-class Vector2D extends Point2D {
+export class Vector2D extends Point2D {
   /**
    * Creates a Vector
    *  @param {number} x - The x axis scalar of the vector
@@ -184,7 +183,7 @@ class Vector2D extends Point2D {
 /**
  * Defines a circular point in 2D space that can collide and detect collision
  */
-class BoundingCircle extends Point2D {
+export class BoundingCircle extends Point2D {
   /**
    * Creates a new bounding circle
    *  @param {number} x - The x position of the centre of the circle
@@ -235,7 +234,7 @@ class BoundingCircle extends Point2D {
  * Implements an Axis Aligned Bounding Box (AABB)
  *  @extends Point2D
  */
-class BoundingBox extends Point2D {
+export class BoundingBox extends Point2D {
   /**
    * Creates a new bounding box
    *  @param {number} x - The x position of the top left corner

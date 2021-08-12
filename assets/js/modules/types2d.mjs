@@ -19,6 +19,12 @@ export class Point2D {
     this._y = y;
   }
   /**
+   * Creates a copy of this point
+   */
+  clone() {
+    return new Point2D(this._x, this._y);
+  }
+  /**
    * Copies the values of another point to this one
    *  @param {Object} point - The point to copy to this one
    */

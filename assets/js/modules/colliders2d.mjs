@@ -1,3 +1,6 @@
+
+import { Point2D, Vector2D } from "./types2d.mjs";
+
 /**
  * Defines a circular point in 2D space that can collide and detect collision
  */
@@ -173,9 +176,8 @@ export class BoundingBox extends Point2D {
     if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
       return null;
     }
-
     const nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
-    const farTime = farTimeX > farTimeY ? farTimeX : farTimeY;
+    const farTime = farTimeX < farTimeY ? farTimeX : farTimeY;
     if (nearTime >= 1 || farTime <= 0) {
       return null;
     }
@@ -244,6 +246,7 @@ export class BoundingBox extends Point2D {
     if (hit) {
       hit.delta.x += vector.x;
       hit.delta.y += vector.y;
+      // If delta x and y are 0 box is already in intersection before moving
     }
     return hit;
   }

@@ -9,7 +9,7 @@ import { Tile2D, TileMap2D } from "./tilemap2d.mjs";
 /**
  * Models a ray propegating in 2D space
  */
-class Ray2D {
+export class Ray2D {
   /**
    * Creates a new Ray2D
    *  @param {Object} origin - The 2D Point origin of the ray
@@ -61,14 +61,14 @@ class Ray2D {
     let stepDistX = 0;
     let stepDistY = 0;
 
-    if (vectorX < 0) { // Moving "right" in x.
+    if (vectorX < 0) {        // Moving "right" in x.
       rayStepX = -1;
       stepDistX = (originX - mapPosX) * rayDeltaX;
     } else {                  // Moving "left" in x.
       rayStepX = 1;
       stepDistX = (mapPosX + 1.0 - originX) * rayDeltaX;
     }
-    if (vectorY < 0) { // Moving "up" in y.
+    if (vectorY < 0) {        // Moving "up" in y.
       rayStepY = -1;
       stepDistY = (originY - mapPosY) * rayDeltaY;
     } else {                  // Moving "down" in y.
@@ -94,7 +94,6 @@ class Ray2D {
         // Y step closest to ray path
         stepDistY += rayDeltaY;
         mapPosY += rayStepY;
-
         // Has the ray hit a wall?
         let tile = map.getTile(mapPosX, mapPosY);
         if (tile.blocking) {
@@ -111,7 +110,7 @@ class Ray2D {
 /**
  * Models a 2D raycasting camera.
  */
-class RayCamera2D {
+export class RayCamera2D {
   /**
    * Creates a new RayCamera2D
    *  @param {Object} position The x,y coordinates of the camera origin
@@ -189,5 +188,3 @@ class RayCamera2D {
     }
   }
 }
-
-export { Ray2D, RayCamera2D };

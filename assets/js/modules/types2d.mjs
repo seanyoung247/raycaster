@@ -263,6 +263,42 @@ export class BoundingBox extends Point2D {
   get radiusY() { return this._rY; }
   set radiusY(val) { this._rY = val; }
 
+
+  /**
+   * Checks if an object is colliding with this one
+   *  @param {number} x The x coordinate of the center of the object
+   *  @param {number} y The y coordinate of the center of the object
+   *  @param {number} rX The offset between the object's center and x-axis sides
+   *  @param {number} rY The offset between the object's center and y-axis sides
+   */
+  intersection(x, y, rX, rY) {
+    const dX = x - this._x;
+    const pX = (rX + this._rX) - Math.abs(dX);
+    // If the object isn't overlapping on the x axis, it can't be intersecting this one
+    if (pX <= 0) return null;
+
+    const dY = y - this._y;
+    const pY = (rY + this._rY) - Math.abs(dY);
+    if (pY <= 0) return null;
+
+    if (pX < pY) {
+      // Closest to x axis - so x was the collision point
+      const sX = Math.sign(dX);
+      return {
+        delta: {x: pX * sX, y: 0},
+        normal: sX,
+        pos: {x: this._x + (this._rX * sX), y: y}
+      };
+    } else {
+      const sY = Math.sign(dY);
+      return {
+        delta: {x: 0, y: pY * sY},
+        normal: sY,
+        pos: {x: x, y: this._y + (this.rY * sY)}
+      };
+    }
+  }
+
   /**
    * Checks whether the point is within the box boundary
    *  @param {Object} point - The Point2D cordinates to check
@@ -321,11 +357,10 @@ export class BoundingBox extends Point2D {
 
     const nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
     const farTime = farTimeX > farTimeY ? farTimeX : farTimeY;
-
     if (nearTime >= 1 || farTime <= 0) {
       return null;
     }
-  
+
     let hit = {time: Math.clamp(nearTime, 0, 1)};
     if (nearTimeX > nearTimeY) {
       hit.normal ={

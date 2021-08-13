@@ -3,7 +3,7 @@
 /**
  * Stores individual tile information
  */
-class Tile2D {
+export class Tile2D {
   /**
    * Creates a new tile
    *  @param {number} type - Surface type of this tile
@@ -44,7 +44,7 @@ class Tile2D {
 /**
  * Models a 2D map built of discrete tiles in a square grid.
  */
-class TileMap2D {
+export class TileMap2D {
   /**
    * Generates a new tile map from a template
    *  @param {Object} template -
@@ -96,5 +96,3 @@ class TileMap2D {
   addEntity() {}
   removeEntity() {}
 }
-
-export { Tile2D, TileMap2D };

@@ -90,6 +90,9 @@ export class Vector2D extends Point2D {
   constructor(x, y) {
     super(x, y);
   }
+  clone() {
+    return new Vector2D(this._x, this._y);
+  }
   /**
    * Normaizes this vector. A normalized vector is one with a magnitude of 1.
    */

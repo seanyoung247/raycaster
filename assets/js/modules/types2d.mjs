@@ -226,7 +226,7 @@ export class BoundingCircle extends Point2D {
   }
 
   /** NOT YET IMPLEMENTED */
-  intersects(circle) {return null;}
+  intersection(circle) {return null;}
 }
 
 /**
@@ -269,14 +269,14 @@ export class BoundingBox extends Point2D {
    *  @return {object} An object describing any collision or null if no collision
    */
   pointIntersection(point) {
-    const dX = point.x - this.x;
-    const pX = this.rX - Math.abs(dX);
+    const dX = point.x - this._x;
+    const pX = this._rX - Math.abs(dX);
     if (pX <= 0) {
       return null;
     }
 
-    const dY = point.y - this.y;
-    const pY = this.rY - Math.abs(dY);
+    const dY = point.y - this._y;
+    const pY = this._rY - Math.abs(dY);
     if (pY <= 0) {
       return null;
     }
@@ -286,14 +286,14 @@ export class BoundingBox extends Point2D {
       return {
         delta: { x: pX * sX , y: 0 },
         normal: sX,
-        pos: { x: this.x + (this.rX * sX) , y: point.y };
+        pos: { x: this._x + (this._rX * sX) , y: point.y }
       }
     } else {
       const sY = Math.sign(dY);
       return {
         delta: { x: 0, y: pY * sY },
         normal: sY,
-        pos: { x: point.x , y: this.y + (this.rX * sX) };
+        pos: { x: point.x , y: this._y + (this._rX * sX) }
       }
     }
   }
@@ -305,15 +305,15 @@ export class BoundingBox extends Point2D {
    *  @param {number} pX X axis padding to add to bounding box dimensions
    *  @param {number} pY Y axis padding to add to bounding box dimensions
    */
-  vectorIntersection(origin, vector, pX, pY) {
+  vectorIntersection(origin, vector, pX=0, pY=0) {
     const scaleX = 1.0 / vector.x;
     const scaleY = 1.0 / vector.y;
     const signX = Math.sign(scaleX);
     const signY = Math.sign(scaleY);
-    const nearTimeX = (this.x - signX * (this.rX + pX) - origin.x) * scaleX;
-    const nearTimeY = (this.y - signY * (this.rY + pY) - origin.y) * scaleY;
-    const farTimeX = (this.x + signX * (this.rX + pX) - origin.x) * scaleX;
-    const farTimeY = (this.y + signY * (this.rY + pY) - origin.y) * scaleY;
+    const nearTimeX = (this._x - signX * (this._rX + pX) - origin.x) * scaleX;
+    const nearTimeY = (this._y - signY * (this._rY + pY) - origin.y) * scaleY;
+    const farTimeX = (this._x + signX * (this._rX + pX) - origin.x) * scaleX;
+    const farTimeY = (this._y + signY * (this._rY + pY) - origin.y) * scaleY;
 
     if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
       return null;
@@ -325,19 +325,27 @@ export class BoundingBox extends Point2D {
     if (nearTime >= 1 || farTime <= 0) {
       return null;
     }
-
+  
     let hit = {time: Math.clamp(nearTime, 0, 1)};
     if (nearTimeX > nearTimeY) {
-      hit.normal.x = -signX;
-      hit.normal.y = 0;
+      hit.normal ={
+        x: -signX,
+        y: 0
+      };
     } else {
-      hit.normal.x = 0;
-      hit.normal.y = -signY;
+      hit.normal = {
+        x: 0,
+        y: -signY
+      };
     }
-    hit.delta.x = (1.0 - hit.time) * -vector.x;
-    hit.delta.y = (1.0 - hit.time) * -vector.y;
-    hit.pos.x = origin.x + vector.x * hit.time;
-    hit.pos.y = origin.y + vector.y * hit.time;
+    hit.delta = {
+      x: (1.0 - hit.time) * -vector.x,
+      y: (1.0 - hit.time) * -vector.y
+    };
+    hit.pos = {
+      x: origin.x + vector.x * hit.time,
+      y: origin.y + vector.y * hit.time
+    };
 
     return hit;
   }

@@ -1,7 +1,7 @@
 /**
  * Enforces the abstract class paradigm
  */
-class AbstractClass {
+export class AbstractClass {
   /**
    * Ensures the class being created is a derived class not a base class
    *  @param {Object} BaseClass - The baseclass that is abstract
@@ -25,5 +25,3 @@ class AbstractClass {
     );
   }
 }
-
-export { AbstractClass };

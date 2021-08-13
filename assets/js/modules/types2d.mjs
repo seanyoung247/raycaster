@@ -351,64 +351,57 @@ export class BoundingBox extends Point2D {
   }
 
   /**
-   * Performs a comprehensive collision test that checks where the two boxes are
-   * overlapping and indicates the closest point to move them out of collision.
+   * Performs a collision test that checks where the two boxes are overlapping
+   * and indicates the closest point to move them out of collision.
    *  @param {Object} box - The BoundingBox to check for intersection
-   *  @return {Object} a dictionary with side: axis of intersection and
-   *                     pos: closest point of non-intersection
+   *  @return {Object} An object describing any collision or null if no collision
    */
-  intersects(box) {
-    // Find the amount of intersection for the left and right sides
-    const x1 = (box._x + box._w) - this._x;
-    const x2 = (this._x + this._w) - box._x;
-    let x = 0, xPos = 0;
-    // Find the closest side
-    if (x1 < x2) {
-      x = x1;
-      xPos = this._x - (box._w + 1);
-    } else {
-      x = x2;
-      xPos = this._x + this._w + 1;
+  intersection(box) {
+    const dX = box._x - this._x;
+    const pX = (box._rX + this._rX) - Math.abs(dX);
+    if (pX <= 0) {
+      return null;
     }
-    // If x is negative there's no collision in x which means
-    // the boxes aren't intersecting
-    if (x < 0) return null;
 
-    // Find the amount of intersection for the top and bottom sides
-    const y1 = (box._y + box._h) - this._y;
-    const y2 = (this._y + this._h) - box._y;
-    let y = 0, yPos = 0;
-    if (y1 < y2) {
-      y = y1;
-      yPos = this._y - (box._h + 1);
-    } else {
-      y = y2;
-      yPos = this._y + this._h + 1;
+    const dY = box._y - this._y;
+    const pY = (box._rY + this._rY) - Math.abs(dY);
+    if (pY <= 0) {
+      return null;
     }
-    if (y < 0) return null;
 
-    // Find the closest axis
-    if (x < y) {
-      // x collision
-      return {side: 'x', pos: xPos};
+    if (pX < pY) {
+      const sX = Math.sign(dX);
+      return {
+        delta: { x: pX * sX , y: 0 },
+        normal: sX,
+        pos: { x: this._x + (this._rX * sX) , y: box._y }
+      }
     } else {
-      return {side: 'y', pos: yPos};
+      const sY = Math.sign(dY);
+      return {
+        delta: { x: 0, y: pY * sY },
+        normal: sY,
+        pos: { x: box._x , y: this._y + (this._rY * sY) }
+      }
     }
   }
 
   /**
-   * Checks the entire boundingBox passed is inside this one.
-   *  @param {Object} box - The box to check
-   *  @return {boolean} True/False whether the box passed is contained within this one
+   * Performs a collision test for a bounding box moving along a vector
+   *  @param {object} box
    */
-  contains(box) {
-    if (this._x < box._x && this._y < box._y &&
-        this._x + this._w > box._x + box._w &&
-        this._y + this._h > box._y + box._h) {
-      return true;
+  sweptIntersection(box, vector) {
+    // If box isn't moving we can just do a static intersection
+    if (vector.x === 0 && vector.y === 0) {
+      return this.intersection(box);
     }
-    return false;
+    // Sweeping a box is the same as sweeping a vector with the target dimensions
+    // increased by the box's radius
+    const hit = this.vectorIntersection(box, vector, box._rX, box._rY);
+    if (hit) {
+      hit.delta.x += vector.x;
+      hit.delta.y += vector.y;
+    }
+    return hit;
   }
 }
-
-export { Point2D, Vector2D, BoundingCircle, BoundingBox };

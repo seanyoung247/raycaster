@@ -4,6 +4,9 @@
  *  Defines types for working in 2D space
  *
  */
+Math.clamp = function(val, min, max) {
+  return Math.max(min, Math.min(val, max));
+}
 
 /**
  * Models a point in 2D space

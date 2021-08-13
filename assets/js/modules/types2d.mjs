@@ -388,37 +388,21 @@ export class BoundingBox extends Point2D {
   /**
    * Performs a collision test that checks where the two boxes are overlapping
    * and indicates the closest point to move them out of collision.
-   *  @param {Object} box - The BoundingBox to check for intersection
+   *  @param {Object} box The BoundingBox to check for intersection
    *  @return {Object} An object describing any collision or null if no collision
    */
-  intersection(box) {
-    const dX = box._x - this._x;
-    const pX = (box._rX + this._rX) - Math.abs(dX);
-    if (pX <= 0) {
-      return null;
-    }
+  boxIntersection(box) {
+    return this.intersection(box._x, box._y, box._rX, box._rY);
+  }
 
-    const dY = box._y - this._y;
-    const pY = (box._rY + this._rY) - Math.abs(dY);
-    if (pY <= 0) {
-      return null;
-    }
-
-    if (pX < pY) {
-      const sX = Math.sign(dX);
-      return {
-        delta: { x: pX * sX , y: 0 },
-        normal: sX,
-        pos: { x: this._x + (this._rX * sX) , y: box._y }
-      }
-    } else {
-      const sY = Math.sign(dY);
-      return {
-        delta: { x: 0, y: pY * sY },
-        normal: sY,
-        pos: { x: box._x , y: this._y + (this._rY * sY) }
-      }
-    }
+  /**
+   * Performs an intersection test between this bounding box and a circular
+   * collider.
+   *  @param {Object} circle The circle that is colliding with this one
+   *  @return {Object} An object describing any collision or null if no collision
+   */
+  circleIntersection(circle) {
+    return this.intersection(circle.x, circle.y, circle.radius, circle.radius);
   }
 
   /**

@@ -406,8 +406,13 @@ export class BoundingBox extends Point2D {
   }
 
   /**
-   * Performs a collision test for a bounding box moving along a vector
-   *  @param {object} box
+   * Performs a collision test for a bounding box moving along a vector to detect
+   * if the box will intersect at any point while moving along it's vector.
+   * Returns a hit object describing the last good position before collision for
+   * the object or null if no collision.
+   *  @param {Object} box The box that is colliding with this one
+   *  @param {Object} vector The Vector2D the box is moving along
+   *  @return {Object} hit object describing the collision and last good position
    */
   sweptIntersection(box, vector) {
     // If box isn't moving we can just do a static intersection
@@ -417,6 +422,25 @@ export class BoundingBox extends Point2D {
     // Sweeping a box is the same as sweeping a vector with the target dimensions
     // increased by the box's radius
     const hit = this.vectorIntersection(box, vector, box._rX, box._rY);
+    if (hit) {
+      hit.delta.x += vector.x;
+      hit.delta.y += vector.y;
+    }
+    return hit;
+  }
+
+  /**
+   * Performs a swept intersection test between this bounding box and a circular
+   * collider.
+   *  @param {Object} circle
+   *  @param {Object} vector
+   *  @return {Object} hit object describing the collision and last good position
+   */
+  sweptCircleIntersection(circle, vector) {
+    if (vector.x === 0 && vector.y === 0) {
+      return this.circleIntersection(circle);
+    }
+    const hit = this.vectorIntersection(circle, vector, circle.radius, circle.radius);
     if (hit) {
       hit.delta.x += vector.x;
       hit.delta.y += vector.y;

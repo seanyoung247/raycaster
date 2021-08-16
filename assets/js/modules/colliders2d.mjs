@@ -125,7 +125,7 @@ export class AABBCollider extends Point2D {
       return {
         delta: {x: 0, y: pY * sY},
         normal: sY,
-        pos: {x: x, y: this._y + (this.rY * sY)}
+        pos: {x: x, y: this._y + (this._rY * sY)}
       };
     }
   }

@@ -167,7 +167,7 @@ export class RayCamera2D {
   }
 
   /**
-   * Casts rays into the map for each column and returns a list of distances
+   * Casts rays into the map for each column and creates a list of distances
    * describing the camera view.
    *  @param {Object} map The map to cast into
    */

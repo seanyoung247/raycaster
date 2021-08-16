@@ -41,7 +41,8 @@ export class CircleCollider extends Point2D {
    *  @return {boolean} True if in collision otherwise false
    */
   collision(circle) {
-    return (this.distanceTo(circle) < (this._radius + circle._radius));
+    return (this.distanceTo2(circle) <
+      ((this._radius + circle._radius)*(this._radius + circle._radius)));
   }
 
   intersection(x, y, rX, rY) {

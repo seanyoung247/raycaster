@@ -45,7 +45,40 @@ export class CircleCollider extends Point2D {
       ((this._radius + circle._radius)*(this._radius + circle._radius)));
   }
 
-  intersection(x, y, rX, rY) {
+  /**
+   * Checks if an object is colliding with this one
+   *  @param {number} x The x coordinate of the center of the object
+   *  @param {number} y The y coordinate of the center of the object
+   *  @param {number} rX The offset between the object's center and x-axis sides
+   *  @param {number} rY The offset between the object's center and y-axis sides
+   */
+  intersection(x, y, rX, rY) {}
+  pointIntersection(point) {
+    const dX = this._x - point._x;
+    const dY = this._y - point._y;
+    const dist2 = (dX * dX) + (dY * dY);    // Square of distance
+    const r2 = this._radius * this._radius; // Square of radius
+    // If the square of distance is smaller than the square of radius, collision has occured.
+    if (dist2 < r2) {
+      // dX-dY describes a vector between point and centre. We can use that vector
+      // to place the point outside the circle by scaling it by the circle radius
+      const dist = Math.sqrt(dist2);
+      const offset = this._radius - dist;
+      const vX = (dX / dist) * offset;
+      const vY = (dY / dist) * offset;
+      return {
+        delta: {x: vX, y: vY},
+        normal: 0,
+        pos: {x: point._x - vX, y: point._y - vY}
+      };
+    }
+    return null;
+  }
+  circleIntersection(circle) {
+    let dist = this.distanceTo(circle);
+  }
+  boxIntersection(box) {}
+  vectorIntersection(origin, vector, padding=0) {
 
   }
   sweptIntersection(circle, vector) {

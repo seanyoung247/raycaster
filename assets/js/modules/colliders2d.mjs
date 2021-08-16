@@ -150,14 +150,14 @@ export class AABBCollider extends Point2D {
       const sX = Math.sign(dX);
       return {
         delta: {x: pX * sX, y: 0},
-        normal: sX,
+        normal: {x: sX, y: 0},
         pos: {x: this._x + (this._rX * sX), y: y}
       };
     } else {
       const sY = Math.sign(dY);
       return {
         delta: {x: 0, y: pY * sY},
-        normal: sY,
+        normal: {x: 0, y: sY},
         pos: {x: x, y: this._y + (this._rY * sY)}
       };
     }

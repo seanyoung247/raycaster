@@ -50,33 +50,48 @@ export class CircleCollider extends Point2D {
    * Checks if an object is colliding with this one
    *  @param {number} x The x coordinate of the center of the object
    *  @param {number} y The y coordinate of the center of the object
-   *  @param {number} rX The offset between the object's center and x-axis sides
-   *  @param {number} rY The offset between the object's center and y-axis sides
+   *  @param {number} radius The offset between the object's center and sides
+   *  @return {Object} A hit object describing the collision or null if no collision
    */
-  intersection(x, y, rX, rY) {}
-  pointIntersection(point) {
-    const dX = this._x - point._x;
-    const dY = this._y - point._y;
-    const dist2 = (dX * dX) + (dY * dY);    // Square of distance
-    const r2 = this._radius * this._radius; // Square of radius
+  intersection(x, y, radius) {
+    const dX = this._x - x;       // The x component of vector between origins
+    const dY = this._y - y;       // The y component of vector between origins
+    const dist2 = (dX * dX) + (dY * dY);  // Square of distance
+    const cR = this._radius + radius;     // Combined radius
+    const r2 = cR * cR;                   // Square of combined radius
     // If the square of distance is smaller than the square of radius, collision has occured.
     if (dist2 < r2) {
-      // dX-dY describes a vector between point and centre. We can use that vector
-      // to place the point outside the circle by scaling it by the circle radius
+      /* dX-dY describes a vector between centre points. We can use that vector
+         to place the point outside the circle by scaling it to be the same
+         length as the combined circle radii */
       const dist = Math.sqrt(dist2);
-      const offset = this._radius - dist;
-      const vX = (dX / dist) * offset;
-      const vY = (dY / dist) * offset;
+      const offset = cR - dist;   // Offset distance from point to boundary
+      const nX = (dX / dist);     // X component of collision normal
+      const nY = (dY / dist);     // y component of collision normal
+      const vX = nX * offset;     // x component of displacement vector
+      const vY = nY * offset;     // y component of displacement vector
       return {
-        delta: {x: vX, y: vY},
-        normal: 0,
-        pos: {x: point._x - vX, y: point._y - vY}
+        delta: {x: vX, y: vY},    // Vector that will move object out of collision
+        normal: {x: nX, y: nY},   // A vector pointing directly away from the collision
+        pos: {x: x - vX, y: y - vY} // The collision point
       };
     }
     return null;
   }
+
+  /**
+   * Checks whether the point is within the circle
+   *  @param {Object} point - The Point2D cordinates to check
+   *  @return {object} An object describing any collision or null if no collision
+   */
+  pointIntersection(point) {
+    return this.intersection(point.x, point.y, 0);
+  }
+  /**
+   * Performs
+   */
   circleIntersection(circle) {
-    let dist = this.distanceTo(circle);
+    return this.intersection(circle._x, circle._y, circle._radius);
   }
   boxIntersection(box) {}
   vectorIntersection(origin, vector, padding=0) {

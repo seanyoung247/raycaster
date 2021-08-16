@@ -54,11 +54,11 @@ export class CircleCollider extends Point2D {
    *  @return {Object} A hit object describing the collision or null if no collision
    */
   intersection(x, y, radius) {
-    const dX = this._x - x;       // The x component of vector between origins
-    const dY = this._y - y;       // The y component of vector between origins
-    const dist2 = (dX * dX) + (dY * dY);  // Square of distance
-    const cR = this._radius + radius;     // Combined radius
-    const r2 = cR * cR;                   // Square of combined radius
+    // The vector between object centres
+    const d = {x: this._x - x, y: this._y - y}
+    const dist2 = (d.x * d.x) + (d.y * d.y); // Square of distance
+    const cR = this._radius + radius;        // Combined radius
+    const r2 = cR * cR;                      // Square of combined radius
     // If the square of distance is smaller than the square of radius, collision has occured.
     if (dist2 < r2) {
       /* dX-dY describes a vector between centre points. We can use that vector
@@ -66,14 +66,17 @@ export class CircleCollider extends Point2D {
          length as the combined circle radii */
       const dist = Math.sqrt(dist2);
       const offset = cR - dist;   // Offset distance from point to boundary
-      const nX = (dX / dist);     // X component of collision normal
-      const nY = (dY / dist);     // y component of collision normal
-      const vX = nX * offset;     // x component of displacement vector
-      const vY = nY * offset;     // y component of displacement vector
+      // Normalised vector of collision direction
+      const n = {x: d.x / dist, y: d.y / dist};
+      // Displacement vector (vector between collision point and current position)
+      const v = {x: n.x * offset, y: n.y * offset};
+      // Boundary intersection point
+      const p = {x: this._x - (n.x * this._radius), y: this._y - (n.y * this._radius)};
+
       return {
-        delta: {x: vX, y: vY},    // Vector that will move object out of collision
-        normal: {x: nX, y: nY},   // A vector pointing directly away from the collision
-        pos: {x: x - vX, y: y - vY} // The collision point
+        delta: {x: -v.x, y: -v.y},  // Vector that will move object out of collision
+        normal: {x: -n.x, y: -n.y}, // A vector pointing directly away from the collision
+        pos: {x: p.x, y: p.y}       // The collision point
       };
     }
     return null;

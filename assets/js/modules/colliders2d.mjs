@@ -127,33 +127,28 @@ export class AABBCollider extends Point2D {
    *  @return {object} An object describing any collision or null if no collision
    */
   pointIntersection(point) {
-    const dX = point.x - this._x;
-    const pX = this._rX - Math.abs(dX);
-    if (pX <= 0) {
-      return null;
-    }
+    return this.intersection(point.x, point.y, 0, 0);
+  }
 
-    const dY = point.y - this._y;
-    const pY = this._rY - Math.abs(dY);
-    if (pY <= 0) {
-      return null;
-    }
+  /**
+   * Performs a collision test that checks where the two boxes are overlapping
+   * and indicates the closest point to move them out of collision.
+   *  @param {Object} box The BoundingBox to check for intersection
+   *  @return {Object} An object describing any collision or null if no collision
+   */
+  boxIntersection(box) {
+    return this.intersection(box._x, box._y, box._rX, box._rY);
+  }
 
-    if (pX < pY) {
-      const sX = Math.sign(dX);
-      return {
-        delta: { x: pX * sX , y: 0 },
-        normal: sX,
-        pos: { x: this._x + (this._rX * sX) , y: point.y }
-      }
-    } else {
-      const sY = Math.sign(dY);
-      return {
-        delta: { x: 0, y: pY * sY },
-        normal: sY,
-        pos: { x: point.x , y: this._y + (this._rX * sX) }
-      }
-    }
+  /**
+   * Performs an intersection test between this bounding box and a circular
+   * collider.
+   *  @param {Object} circle The circle that is colliding with this one
+   *  @return {Object} An object describing any collision or null if no collision
+   */
+  circleIntersection(circle) {
+    // Treats the circle as a square. Ok for now but needs to be fixed
+    return this.intersection(circle.x, circle.y, circle.radius, circle.radius);
   }
 
   /**
@@ -204,26 +199,6 @@ export class AABBCollider extends Point2D {
     };
 
     return hit;
-  }
-
-  /**
-   * Performs a collision test that checks where the two boxes are overlapping
-   * and indicates the closest point to move them out of collision.
-   *  @param {Object} box The BoundingBox to check for intersection
-   *  @return {Object} An object describing any collision or null if no collision
-   */
-  boxIntersection(box) {
-    return this.intersection(box._x, box._y, box._rX, box._rY);
-  }
-
-  /**
-   * Performs an intersection test between this bounding box and a circular
-   * collider.
-   *  @param {Object} circle The circle that is colliding with this one
-   *  @return {Object} An object describing any collision or null if no collision
-   */
-  circleIntersection(circle) {
-    return this.intersection(circle.x, circle.y, circle.radius, circle.radius);
   }
 
   /**

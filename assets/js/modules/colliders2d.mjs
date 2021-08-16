@@ -221,7 +221,7 @@ export class AABBCollider extends Point2D {
 
     let hit = {time: Math.clamp(nearTime, 0, 1)};
     if (nearTimeX > nearTimeY) {
-      hit.normal ={
+      hit.normal = {
         x: -signX,
         y: 0
       };

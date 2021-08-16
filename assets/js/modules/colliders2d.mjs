@@ -4,7 +4,7 @@ import { Point2D, Vector2D } from "./types2d.mjs";
 /**
  * Defines a circular point in 2D space that can collide and detect collision
  */
-export class BoundingCircle extends Point2D {
+export class CircleCollider extends Point2D {
   /**
    * Creates a new bounding circle
    *  @param {number} x - The x position of the centre of the circle
@@ -57,7 +57,7 @@ export class BoundingCircle extends Point2D {
  * Implements an Axis Aligned Bounding Box (AABB)
  *  @extends Point2D
  */
-export class BoundingBox extends Point2D {
+export class AABBCollider extends Point2D {
   /**
    * Creates a new bounding box
    *  @param {number} x - The x position of the center of the box

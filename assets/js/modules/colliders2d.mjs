@@ -48,9 +48,10 @@ export class CircleCollider extends Point2D {
   intersection(x, y, rX, rY) {
 
   }
+  sweptIntersection(circle, vector) {
 
-  circleIntersection(circle) {}
-  boxIntersection(box) {}
+  }
+  sweptBoxIntersection(box, vector) {}
 }
 
 /**
@@ -86,6 +87,13 @@ export class AABBCollider extends Point2D {
   set radiusX(val) { this._rX = val; }
   get radiusY() { return this._rY; }
   set radiusY(val) { this._rY = val; }
+
+  /**
+   * Performs a simple collision check on another boundingBox.
+   *  @param {Object} box - The BoundingBox to check for intersection
+   *  @return {boolean} true if colliding
+   */
+  collision(box) {}
 
   /**
    * Checks if an object is colliding with this one
@@ -235,6 +243,7 @@ export class AABBCollider extends Point2D {
    *  @return {Object} hit object describing the collision and last good position
    */
   sweptCircleIntersection(circle, vector) {
+    // Treats the circle as a square. Needs improvement.
     if (vector.x === 0 && vector.y === 0) {
       return this.circleIntersection(circle);
     }

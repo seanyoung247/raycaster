@@ -41,8 +41,9 @@ export class CircleCollider extends Point2D {
    *  @return {boolean} True if in collision otherwise false
    */
   collision(circle) {
+    // If the square of distance is smaller than the square of radius, collision has occured.
     return (this.distanceTo2(circle) <
-      ((this._radius + circle._radius)*(this._radius + circle._radius)));
+      ((this._radius + circle._radius) * (this._radius + circle._radius)));
   }
 
   /**

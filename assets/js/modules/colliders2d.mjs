@@ -144,9 +144,28 @@ export class CircleCollider extends Point2D {
     }
     return null;
   }
-  sweptIntersection(circle, vector) {
 
+  /**
+   * Performs an intersection test for a CircleCollider moving along a given
+   * vector. Returns a hit object describing the first intersection that occurs
+   * or null if no intersection.
+   *  @param {Object} circle - The circle to test
+   *  @param {Object} vector - The circle's movement vector
+   *  @return {Object} The hit object describing the first intersection or null
+   */
+  sweptCircleIntersection(circle, vector) {
+    const hit = this.vectorIntersection(circle, vector, circle._radius);
+    if (hit) {
+      // Calculate actual boundary intersection
+      hit.pos.x -= hit.normal.x * circle._radius;
+      hit.pos.y -= hit.normal.y * circle._radius;
+    }
+    return hit;
   }
+
+  /**
+   *
+   */
   sweptBoxIntersection(box, vector) {}
 }
 
@@ -315,7 +334,7 @@ export class AABBCollider extends Point2D {
    *  @param {Object} vector The Vector2D the box is moving along
    *  @return {Object} hit object describing the collision and last good position
    */
-  sweptIntersection(box, vector) {
+  sweptBoxIntersection(box, vector) {
     // If box isn't moving we can just do a static intersection
     if (vector.x === 0 && vector.y === 0) {
       return this.intersection(box);

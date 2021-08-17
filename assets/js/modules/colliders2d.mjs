@@ -55,13 +55,13 @@ export class CircleCollider extends Point2D {
    */
   intersection(x, y, radius) {
     // The vector between object centres
-    const d = {x: this._x - x, y: this._y - y}
+    const d = {x: this._x - x, y: this._y - y};
     const dist2 = (d.x * d.x) + (d.y * d.y); // Square of distance
     const cR = this._radius + radius;        // Combined radius
     const r2 = cR * cR;                      // Square of combined radius
     // If the square of distance is smaller than the square of radius, collision has occured.
     if (dist2 < r2) {
-      /* dX-dY describes a vector between centre points. We can use that vector
+      /* d describes a vector between centre points. We can use that vector
          to place the point outside the circle by scaling it to be the same
          length as the combined circle radii */
       const dist = Math.sqrt(dist2);
@@ -70,7 +70,7 @@ export class CircleCollider extends Point2D {
       const n = {x: d.x / dist, y: d.y / dist};
       // Displacement vector (vector between collision point and current position)
       const v = {x: n.x * offset, y: n.y * offset};
-      // Boundary intersection point
+      // First boundary intersection point
       const p = {x: this._x - (n.x * this._radius), y: this._y - (n.y * this._radius)};
 
       return {
@@ -98,9 +98,51 @@ export class CircleCollider extends Point2D {
   circleIntersection(circle) {
     return this.intersection(circle._x, circle._y, circle._radius);
   }
+  /**
+   * Performs an intersection test between this CircleCollider and an AABBCollider
+   *  @param {Object} box - The AABBCollider to test against
+   *  @return {Object} A hit object describing the collision or null if no collision
+   */
   boxIntersection(box) {}
-  vectorIntersection(origin, vector, padding=0) {
 
+  /**
+   * Performs an intersection test between this CircleCollider and a vector
+   *  @param {Object} origin - Point2D of the vector origin point
+   *  @param {Object} vector - Vector2D of the vector
+   *  @param {number} padding - How much to increase this circle's radius by
+   */
+  vectorIntersection(origin, vector, padding=0) {
+    // Calculate unit vector of vector
+    const vM = vector.magnitude;
+    const vU = {x: vector.x / vM, y: vector.y / vM};
+    // Calculate dot product of vector and circle/origin vector
+    const t = vU.x * (this._x - origin.x) + vU.y * (this._y - origin.y);
+    // Calculate the point on the infinite line following vector closest to circle centre point
+    const e = {x: t * vU.x + origin.x, y: t * vU.y + origin.y};
+    const eM2 = ((e.x - this._x) * (e.x - this._x)) + ((e.y - this._y) * (e.y - this._y));
+    const r2 = (this._radius + padding) * (this._radius + padding);
+
+    if (eM2 < r2) {
+      // Distance to intersection point
+      const dt = Math.sqrt(r2 - eM2);
+      // Calculate Earliest boundary intersection
+      const f = {x: (t-dt) * vU.x + origin.x, y: (t-dt) * vU.y + origin.y};
+      // Ensure collision point is within vector
+      const p2 = {x: (origin.x + vector.x)-this._x, y: (origin.y + vector.y)-this._y};
+      if (p2.x*p2.x+p2.y*p2.y > r2) return null;
+      // Calculate collision normal
+      const n = {
+        x: (f.x - this._x) / (this._radius + padding),
+        y: (f.y - this._y) / (this._radius + padding)
+      };
+
+      return {
+        delta: {x: f.x - origin.x, y: f.y - origin.y},
+        normal: {x: n.x, y: n.y},
+        pos: {x: f.x, y: f.y}
+      }
+    }
+    return null;
   }
   sweptIntersection(circle, vector) {
 

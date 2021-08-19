@@ -238,6 +238,10 @@ export class AABBCollider extends Point2D {
   set radiusX(val) { this._rX = val; }
   get radiusY() { return this._rY; }
   set radiusY(val) { this._rY = val; }
+  get minX() {return this._x - this._rX;}
+  get maxX() {return this._x + this._rX;}
+  get minY() {return this._y - this._rY;}
+  get maxY() {return this._y + this._rY;}
 
   /**
    * Performs a simple collision check on another AABBCollider.

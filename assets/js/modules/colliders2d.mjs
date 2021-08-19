@@ -118,19 +118,23 @@ export class CircleCollider extends Point2D {
     };
     const cP = {x: box.x + c.x, y: box.y + c.y};
     if (cP.x === this._x && cP.y === this._y) {
-      const b = {w: r.x * 2, h: r.y * 2};
       /* Edge condition: If the circle center point is inside the box cP
         is "stuck" to the circle center which prevents us from calculating where
         to "push" the box out of collision. Treating cP as a collision point
         allows us to push it to the boundary. */
       let hit = box.intersection(cP.x, cP.y, 1, 1);
-      cP.x = hit.pos.x - b.w * hit.normal.x;
-      cP.y = hit.pos.y - b.h * hit.normal.y;
-
-      hit = this.intersection(cP.x, cP.y, 0);
+      hit = this.intersection(hit.pos.x, hit.pos.y, 0);
       // In this case the collision boundary point needs to shift to the other side
-      hit.delta.x += b.w * hit.normal.x;
-      hit.delta.y += b.h * hit.normal.y;
+      const shift = {
+        x: (this._radius * 2) * -hit.normal.x,
+        y: (this._radius * 2) * -hit.normal.y
+      };
+      hit.pos.x += shift.x;
+      hit.pos.y += shift.y;
+      hit.delta.x += shift.x;
+      hit.delta.y += shift.y;
+      hit.normal.x = -hit.normal.x;
+      hit.normal.y = -hit.normal.y;
       return hit;
     }
     // Do a collision test on the closest point

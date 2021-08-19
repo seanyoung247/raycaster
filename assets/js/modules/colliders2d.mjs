@@ -200,9 +200,27 @@ export class CircleCollider extends Point2D {
   }
 
   /**
-   *
+   * Performs a collision test for a AABBCollider moving along a vector to detect
+   * if the box will intersect at any point while moving along it's vector.
+   * Returns a hit object describing the last good position before collision for
+   * the object or null if no collision.
+   *  @param {Object} box The box that is colliding with this one
+   *  @param {Object} vector The Vector2D the box is moving along
+   *  @return {Object} hit object describing the collision and last good position
    */
-  sweptBoxIntersection(box, vector) {}
+  sweptBoxIntersection(box, vector) {
+    const r = {x: box.radiusX, y: box.radiusY};
+    // Get the displacement vector between box and circle centres
+    const d = {x: this._x - box.x, y: this._y - box.y};
+    // Calculate the point on the box boundary closest to the circle
+    const c = {
+      x: Math.clamp(d.x, -r.x, r.x),
+      y: Math.clamp(d.y, -r.y, r.y)
+    };
+    const cP = {x: box.x + c.x, y: box.y + c.y};
+    // Use the closest point on the box to cast vector and check for collision
+    return this.vectorIntersection(cP, vector);
+  }
 }
 
 /**

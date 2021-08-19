@@ -107,7 +107,35 @@ export class CircleCollider extends Point2D {
    *  @param {Object} box - The AABBCollider to test against
    *  @return {Object} A hit object describing the collision or null if no collision
    */
-  boxIntersection(box) {}
+  boxIntersection(box) {
+    const r = {x: box.radiusX, y: box.radiusY};
+    // Get the displacement vector between box and circle centres
+    const d = {x: this._x - box.x, y: this._y - box.y};
+    // Calculate the point on the box boundary closest to the circle
+    const c = {
+      x: Math.clamp(d.x, -r.x, r.x),
+      y: Math.clamp(d.y, -r.y, r.y)
+    };
+    const cP = {x: box.x + c.x, y: box.y + c.y};
+    if (cP.x === this._x && cP.y === this._y) {
+      const b = {w: r.x * 2, h: r.y * 2};
+      /* Edge condition: If the circle center point is inside the box cP
+        is "stuck" to the circle center which prevents us from calculating where
+        to "push" the box out of collision. Treating cP as a collision point
+        allows us to push it to the boundary. */
+      let hit = box.intersection(cP.x, cP.y, 1, 1);
+      cP.x = hit.pos.x - b.w * hit.normal.x;
+      cP.y = hit.pos.y - b.h * hit.normal.y;
+
+      hit = this.intersection(cP.x, cP.y, 0);
+      // In this case the collision boundary point needs to shift to the other side
+      hit.delta.x += b.w * hit.normal.x;
+      hit.delta.y += b.h * hit.normal.y;
+      return hit;
+    }
+    // Do a collision test on the closest point
+    return this.intersection(cP.x, cP.y, 0);
+  }
 
   /**
    * Performs an intersection test between this CircleCollider and a vector

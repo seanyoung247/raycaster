@@ -20,8 +20,8 @@ export class CircleCollider extends Point2D {
     this._radius = radius;
   }
   /**
-   * Copies the values of another BoundingCircle to this one
-   *  @param {Object} circle - The BoundingCircle to copy
+   * Copies the values of another CircleCollider to this one
+   *  @param {Object} circle - The CircleCollider to copy
    */
   copy(circle) {
     this._x = circle._x;
@@ -40,7 +40,7 @@ export class CircleCollider extends Point2D {
   set radius(val) { this._radius = val; }
 
   /**
-   * Detects if two bounding circles are currently in collision
+   * Detects if two CircleColliders are currently in collision
    *  @param {Object} circle The circle to check
    *  @return {boolean} True if in collision otherwise false
    */
@@ -180,7 +180,7 @@ export class CircleCollider extends Point2D {
  */
 export class AABBCollider extends Point2D {
   /**
-   * Creates a new bounding box
+   * Creates a new AABBCollider
    *  @param {number} x - The x position of the center of the box
    *  @param {number} y - The y position of the center of the box
    *  @param {number} rX - Distance from center to x sides
@@ -192,8 +192,8 @@ export class AABBCollider extends Point2D {
     this._rY = rY;
   }
   /**
-   * Copies the values of another BoundingBox to this one
-   *  @param {Object} box - the BoundingBox to copy
+   * Copies the values of another AABBCollider to this one
+   *  @param {Object} box - the AABBCollider to copy
    */
   copy(box) {
     this._x = box._x;
@@ -208,8 +208,8 @@ export class AABBCollider extends Point2D {
   set radiusY(val) { this._rY = val; }
 
   /**
-   * Performs a simple collision check on another boundingBox.
-   *  @param {Object} box - The BoundingBox to check for intersection
+   * Performs a simple collision check on another AABBCollider.
+   *  @param {Object} box - The AABBCollider to check for intersection
    *  @return {boolean} true if colliding
    */
   collision(box) {}
@@ -231,7 +231,7 @@ export class AABBCollider extends Point2D {
     const pY = (rY + this._rY) - Math.abs(dY);
     if (pY <= 0) return null;
 
-    if (pX < pY) {
+    if (pX <= pY) {
       // Closest to x axis - so x was the collision point
       const sX = Math.sign(dX);
       return {
@@ -261,7 +261,7 @@ export class AABBCollider extends Point2D {
   /**
    * Performs a collision test that checks where the two boxes are overlapping
    * and indicates the closest point to move them out of collision.
-   *  @param {Object} box The BoundingBox to check for intersection
+   *  @param {Object} box The AABBCollider to check for intersection
    *  @return {Object} An object describing any collision or null if no collision
    */
   boxIntersection(box) {
@@ -269,7 +269,7 @@ export class AABBCollider extends Point2D {
   }
 
   /**
-   * Performs an intersection test between this bounding box and a circular
+   * Performs an intersection test between this AABBCollider and a circular
    * collider.
    *  @param {Object} circle The circle that is colliding with this one
    *  @return {Object} An object describing any collision or null if no collision
@@ -283,8 +283,8 @@ export class AABBCollider extends Point2D {
    * Checks if a vector intersects this bounding box anywhere along it's length
    *  @param {Object} origin Point2D describing the origin of the vector
    *  @param {Object} vector Vector2D describing the vector
-   *  @param {number} pX X axis padding to add to bounding box dimensions
-   *  @param {number} pY Y axis padding to add to bounding box dimensions
+   *  @param {number} pX X axis padding to add to AABBCollider dimensions
+   *  @param {number} pY Y axis padding to add to AABBCollider dimensions
    */
   vectorIntersection(origin, vector, pX=0, pY=0) {
     const scaleX = 1.0 / vector.x;
@@ -330,7 +330,7 @@ export class AABBCollider extends Point2D {
   }
 
   /**
-   * Performs a collision test for a bounding box moving along a vector to detect
+   * Performs a collision test for a AABBCollider moving along a vector to detect
    * if the box will intersect at any point while moving along it's vector.
    * Returns a hit object describing the last good position before collision for
    * the object or null if no collision.

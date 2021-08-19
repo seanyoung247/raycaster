@@ -1,6 +1,10 @@
 
 import { Point2D, Vector2D } from "./types2d.mjs";
 
+Math.clamp = function(val, min, max) {
+ return Math.max(min, Math.min(val, max));
+}
+
 /**
  * Defines a circular point in 2D space that can collide and detect collision
  */

@@ -248,7 +248,14 @@ export class AABBCollider extends Point2D {
    *  @param {Object} box - The AABBCollider to check for intersection
    *  @return {boolean} true if colliding
    */
-  collision(box) {}
+  collision(box) {
+    return (
+      (this.minX < box.maxX) &&
+      (this.maxX > box.minX) &&
+      (this.minY < box.maxY) &&
+      (this.maxY > box.minY)
+    );
+  }
 
   /**
    * Checks if an object is colliding with this one

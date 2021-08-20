@@ -94,6 +94,7 @@ export class CircleCollider extends Point2D {
   pointIntersection(point) {
     return this.intersection(point.x, point.y, 0);
   }
+
   /**
    * Performs an intersection test between this CircleCollider and another
    *  @param {Object} circle - The other CircleCollider to test against
@@ -102,6 +103,7 @@ export class CircleCollider extends Point2D {
   circleIntersection(circle) {
     return this.intersection(circle._x, circle._y, circle._radius);
   }
+
   /**
    * Performs an intersection test between this CircleCollider and an AABBCollider
    *  @param {Object} box - The AABBCollider to test against
@@ -161,11 +163,11 @@ export class CircleCollider extends Point2D {
     if (eM2 < r2) {
       // Distance to intersection point
       const dt = Math.sqrt(r2 - eM2);
-      // Calculate Earliest boundary intersection
-      const f = {x: (t-dt) * vU.x + origin.x, y: (t-dt) * vU.y + origin.y};
+      const pt = t-dt;
       // Ensure collision point is within vector
-      const p2 = {x: (origin.x + vector.x)-this._x, y: (origin.y + vector.y)-this._y};
-      if (p2.x*p2.x+p2.y*p2.y > r2) return null;
+      if (pt < 0 || pt > vM) return null;
+      // Calculate Earliest boundary intersection
+      const f = {x: pt * vU.x + origin.x, y: pt * vU.y + origin.y};
       // Calculate collision normal
       const n = {
         x: (f.x - this._x) / (this._radius + padding),

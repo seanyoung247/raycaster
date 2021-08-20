@@ -128,19 +128,25 @@ export class CircleCollider extends Point2D {
         to "push" the box out of collision. Treating cP as a collision point
         allows us to push it to the boundary. */
       let hit = box.intersection(cP.x, cP.y, 1, 1);
-      hit = this.intersection(hit.pos.x, hit.pos.y, 0);
-      // In this case the collision boundary point needs to shift to the other side
-      const shift = {
-        x: (this._radius * 2) * -hit.normal.x,
-        y: (this._radius * 2) * -hit.normal.y
+      // Get the closest circle boundary to the new point
+      const pV = {x: this._x - hit.pos.x, y: this._y - hit.pos.y};
+      const pVM = Math.sqrt(pV.x * pV.x + pV.y * pV.y);
+      // Collision normal
+      const pVU = {x: pV.x / pVM, y: pV.y / pVM};
+      // Displacement offset
+      const offset = {x: (pVU.x * this._radius), y: (pVU.y * this._radius)};
+
+      return {
+        delta: {
+          x: (cP.x - hit.pos.x) + offset.x,
+          y: (cP.y - hit.pos.y) + offset.y
+        },
+        normal: {x: pVU.x, y: pVU.y},
+        pos: {
+          x: this._x + offset.x,
+          y: this._y + offset.y
+        }
       };
-      hit.pos.x += shift.x;
-      hit.pos.y += shift.y;
-      hit.delta.x += shift.x;
-      hit.delta.y += shift.y;
-      hit.normal.x = -hit.normal.x;
-      hit.normal.y = -hit.normal.y;
-      return hit;
     }
     // Do a collision test on the closest point
     return this.intersection(cP.x, cP.y, 0);

@@ -19,6 +19,9 @@ export class CircleCollider extends Point2D {
     super(x, y);
     this._radius = radius;
   }
+  clone() {
+    return new CircleCollider(this._x, this._y, this._radius);
+  }
   /**
    * Copies the values of another CircleCollider to this one
    *  @param {Object} circle - The CircleCollider to copy
@@ -242,6 +245,9 @@ export class AABBCollider extends Point2D {
     super(x, y);
     this._rX = rX;
     this._rY = rY;
+  }
+  clone() {
+    return new AABBCollider(this._x, this._y, this._rX, this._rY);
   }
   /**
    * Copies the values of another AABBCollider to this one

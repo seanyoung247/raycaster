@@ -83,7 +83,8 @@ export class CircleCollider extends Point2D {
       return {
         delta: {x: -v.x, y: -v.y},  // Vector that will move object out of collision
         normal: {x: -n.x, y: -n.y}, // A vector pointing directly away from the collision
-        pos: {x: p.x, y: p.y}       // The collision point
+        pos: {x: p.x, y: p.y},      // The collision point
+        dist: 0                     // Distance to collision point if sweeping
       };
     }
     return null;
@@ -142,10 +143,8 @@ export class CircleCollider extends Point2D {
           y: (cP.y - hit.pos.y) + offset.y
         },
         normal: {x: pVU.x, y: pVU.y},
-        pos: {
-          x: this._x + offset.x,
-          y: this._y + offset.y
-        }
+        pos: {x: this._x + offset.x, y: this._y + offset.y},
+        dist: 0
       };
     }
     // Do a collision test on the closest point
@@ -319,7 +318,8 @@ export class AABBCollider extends Point2D {
       return {
         delta: {x: 0, y: pY * sY},
         normal: {x: 0, y: sY},
-        pos: {x: x, y: this._y + (this._rY * sY)}
+        pos: {x: x, y: this._y + (this._rY * sY)},
+        dist: 0
       };
     }
   }
@@ -380,7 +380,7 @@ export class AABBCollider extends Point2D {
       return null;
     }
 
-    let hit = {time: Math.clamp(nearTime, 0, 1)};
+    let hit = {dist: Math.clamp(nearTime, 0, 1)};
     if (nearTimeX > nearTimeY) {
       hit.normal = {
         x: -signX,

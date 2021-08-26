@@ -93,7 +93,7 @@ export class CircleCollider extends Point2D {
   /**
    * Checks whether the point is within the circle
    *  @param {Object} point - The Point2D cordinates to check
-   *  @return {object} An object describing any collision or null if no collision
+   *  @return {object} A hit object describing any collision or null if no collision
    */
   pointIntersection(point) {
     return this.intersection(point.x, point.y, 0);
@@ -129,7 +129,7 @@ export class CircleCollider extends Point2D {
         to "push" the box out of collision. Treating cP as a collision point
         allows us to push it to the boundary. */
       let hit = box.intersection(cP.x, cP.y, 1, 1);
-      // Get the closest circle boundary to the new point
+      // Get the closest boundary to the new point
       const pV = {x: this._x - hit.pos.x, y: this._y - hit.pos.y};
       const pVM = Math.sqrt(pV.x * pV.x + pV.y * pV.y);
       // Collision normal
@@ -167,9 +167,9 @@ export class CircleCollider extends Point2D {
     const e = {x: t * vU.x + origin.x, y: t * vU.y + origin.y};
     const eM2 = ((e.x - this._x) * (e.x - this._x)) + ((e.y - this._y) * (e.y - this._y));
     const r2 = (this._radius + padding) * (this._radius + padding);
-
+    // If the closest point is closer than radius, there might be a collision
     if (eM2 < r2) {
-      // Distance to intersection point
+      // Distance along line to intersection point
       const dt = Math.sqrt(r2 - eM2);
       const pt = t-dt;
       // Ensure collision point is within vector
@@ -185,7 +185,8 @@ export class CircleCollider extends Point2D {
       return {
         delta: {x: f.x - origin.x, y: f.y - origin.y},
         normal: {x: n.x, y: n.y},
-        pos: {x: f.x, y: f.y}
+        pos: {x: f.x, y: f.y},
+        dist: pt
       }
     }
     return null;
@@ -211,10 +212,10 @@ export class CircleCollider extends Point2D {
 
   /**
    * Performs a collision test for a AABBCollider moving along a vector to detect
-   * if the box will intersect at any point while moving along it's vector.
+   * if the box will intersect at any point while moving along it's path.
    * Returns a hit object describing the last good position before collision for
    * the object or null if no collision.
-   *  @param {Object} box The box that is colliding with this one
+   *  @param {Object} box The box that is colliding with this CircleCollider
    *  @param {Object} vector The Vector2D the box is moving along
    *  @return {Object} hit object describing the collision and last good position
    */

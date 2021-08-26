@@ -158,8 +158,8 @@ export class CircleCollider extends Point2D {
    *  @param {number} padding - How much to increase this circle's radius by
    */
   vectorIntersection(origin, vector, padding=0) {
-    // Calculate unit vector of vector
-    const vM = vector.magnitude;
+    // Calculate normalized vector
+    const vM = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
     const vU = {x: vector.x / vM, y: vector.y / vM};
     // Calculate dot product of vector and circle/origin vector
     const t = vU.x * (this._x - origin.x) + vU.y * (this._y - origin.y);
